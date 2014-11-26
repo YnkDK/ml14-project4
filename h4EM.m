@@ -1,0 +1,28 @@
+function [mu, P, SIGMA, clusters] = h4EM(D, k, epsilon, mu)
+% H4EM runs k-means clustering using Expectation Maximization.
+% 
+% [mu, P, SIGMA, clusters] = H4EM(D, k, epsilon) takes in a data matrix, a
+% number of desired clusters and a min difference between iterations at
+% which to stop optimising. It returns the centroids of clusters along with
+% cluster probabilities for every cluster, covariance matrices for every
+% cluster and a cluster assignment for every data point so that each point
+% is assigned to the cluster it is most likely to be part of.
+% 
+% [mu, P, SIGMA, clusters] = H4EM(D, k, epsilon, mu) is similar to the
+% previous call, but it accepts the initial centroids as a parameter. This
+% can be used, for example, by starting k-means and using the cetroids from
+% k-means to initialise EM.
+% 
+% See also H4KMEANS.
+
+    if nargin == 3
+%         The initial centroids haven't been given, initialise the 
+% centroids uniformly, at random from the range for every dimension.
+    end
+
+    % TODO implement EM
+    mu = zeros(k,size(D,2));
+    P = zeros(k,1);
+    SIGMA = cell(k,1);
+    clusters = zeros(k,1);
+end

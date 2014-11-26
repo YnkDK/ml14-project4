@@ -1,0 +1,4 @@
+The labels in the data files correspond as follows:
+1, "Iris-versicolor"
+2, "Iris-setosa"
+3, "Iris-virginica"
