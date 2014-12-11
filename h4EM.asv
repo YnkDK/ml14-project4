@@ -52,7 +52,7 @@ function [mu, P, SIGMA, clusters] = h4EM(D, k, epsilon, mu)
          % maximization step
         for i= 1 : k
             centroids(i) = 0;%.... 
-            SIGMA(i) = 0;%....sum(w(i,:)) / sum(w(i,:));
+            SIGMA(i) = 0;%....sum(w(i,:)*()*()') / sum(w(i,:));
             
             
             P(i) = sum(w(i,:)) / n ; %average
