@@ -14,12 +14,14 @@ img_size = size(A);
 
 % TODO. Reshape the image into an N x 3 matrix where N = number of pixels.
 % Each row will contain the Red, Green and Blue pixel values. 
+D = reshape(A, [img_size(1)*img_size(2) img_size(3)]);
 
 % TODO. Run k-means or EM to form clusters of colors. Experiment with using
 % different values for K.
 K = 16;
 
 fprintf('\nApplying K-Means to compress an image.\n\n');
+[centroids, clusters] = h4kmeans(D,K,0.001); 
 
 % TODO. Use the resulting centroids and cluster assignments to construct a
 % vector of N-by-3 where for each pixel you use the centroid color values.

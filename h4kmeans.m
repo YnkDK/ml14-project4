@@ -23,7 +23,7 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
         t =t+1;
         %// Cluster Assignment Step
         clusters = zeros(size(D,1),1); %reset all clusters.
-        for xj = 0 : numOfRows
+        for xj = 1 : numOfRows
             
             row = D(xj);
             [index, value]= min((repmat(row, k) - centroids).^2);
