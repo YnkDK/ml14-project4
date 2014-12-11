@@ -18,7 +18,7 @@ D = reshape(A, [img_size(1)*img_size(2) img_size(3)]);
 
 % TODO. Run k-means or EM to form clusters of colors. Experiment with using
 % different values for K.
-K = 1000000;
+K = 5;
 
 
 fprintf('\nApplying K-Means to compress an image.\n\n');
