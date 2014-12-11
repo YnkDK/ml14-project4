@@ -39,7 +39,7 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
         end
         for xj = 1 : numOfRows   
             repRow = preCompRows{xj};
-            [value, idx] = min((sqrt(sum(abs(repRow - centroids).^2,1))).^2);
+            [value, idx] = min(sum(arrayfun(@dist, repRow, centroids)));
             %j = the index of the cenroids, with the least distance.
             % and assignt Xj to that cluster
             clusters{idx}(xj) = true;
@@ -52,8 +52,12 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
            end;
            centroids(i, :) =  1/size(Ck, 1) * sum(Ck, 1);
         end;
-        change = sum((sqrt(nansum(abs(centroids - Lastcentroids).^2))).^2);
+        change = sum(sum(dist(centroids, Lastcentroids).^2));
         fprintf('Change: %f\n', change);
         Lastcentroids = tempCentroids;
     end;
+end
+
+function [dist] = dist(X, Y)
+    dist = pdist2(X, Y, 'emd');
 end
