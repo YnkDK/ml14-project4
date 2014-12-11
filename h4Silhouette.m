@@ -4,11 +4,11 @@ function [s] = h4Silhouette(D, clusters)
 % H4SILHOUETTE(D, clusters) takes in a data matrix and cluster assignments
 % for each point in D and returns the silhouette values in the n-by-1
 % vector s
-
+s = zeros(size(D, 1)-1);
     % TODO implement h4Silhouette
      
-    for i=1 : size(D,1)
-    xi = D(i);
+    for ii=1 : size(D,1)
+    xi = D(ii);
     
     
     %step 1: get the cluster xi is from.
@@ -34,17 +34,12 @@ function [s] = h4Silhouette(D, clusters)
     end
     
     
-    myMin = minSoFar
+    myMin = minSoFar;
     
     top =myMin-myInXi;
     bottom = max([myInXi, myMin]);
     
     
-    si =top/bottom;
-    
-    
+    s(ii) =top/bottom;
     end;
-    
-    
-    
 end
