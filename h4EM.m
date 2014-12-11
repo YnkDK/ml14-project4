@@ -36,13 +36,13 @@ function [mu, P, SIGMA, clusters] = h4EM(D, k, epsilon, mu)
     while(change > epsilon)
         t = t +1;
         %expectation step
-        for i = 1 : k
+        for ii = 1 : k
             for j=1 : dataPoints
                 %top = f(x(j) | mu(i), ???(i)) * P(i);
                 top =0;%f(xj| mu_i, Sigma_i) \dot P(C_i)
                 bottom = 0;
                 %bottom  = sum(...)which is just larger
-                w(i,j) = top/bottom;
+                w(ii,j) = top/bottom;
             end;
         end;
         
@@ -50,12 +50,12 @@ function [mu, P, SIGMA, clusters] = h4EM(D, k, epsilon, mu)
        
         tempCentroids = centroids;
          % maximization step
-        for i= 1 : k
-            centroids(i) = 0;%.... 
-            SIGMA(i) = 0;%....sum(w(i,:)) / sum(w(i,:));
+        for ii= 1 : k
+            centroids(ii) = 0;%.... 
+            SIGMA(ii) = 0;%....sum(w(i,:)) / sum(w(i,:));
             
             
-            P(i) = sum(w(i,:)) / n ; %average
+            P(ii) = sum(w(ii,:)) / n ; %average
             
         end;
         

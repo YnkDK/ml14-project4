@@ -19,6 +19,16 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
     centroids = Lastcentroids;
     %randomly initalize the centroids.. in the dimensions we have.
     change =epsilon*2; 
+    
+    preCompRows= cell(numOfRows,1);
+    
+    parfor ii =1 : numOfRows
+       row = D(ii, :);
+       repRow = repmat(row, k, 1)';
+       preCompRows{ii} = repRow;
+    end;
+    
+    
     while(change > epsilon)
         fprintf('%f > %f\n', change, epsilon);
         t =t+1;
@@ -28,8 +38,7 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
             clusters{ii} = logical(false(1,numOfRows));
         end
         for xj = 1 : numOfRows   
-            row = D(xj, :);
-            repRow = repmat(row, k, 1)';
+            repRow = preCompRows{xj};
             [value, idx] = min((sqrt(sum(abs(repRow - centroids).^2,1))).^2);
             %j = the index of the cenroids, with the least distance.
             % and assignt Xj to that cluster
