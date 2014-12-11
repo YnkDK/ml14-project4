@@ -7,8 +7,8 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
 % cluster assignments for every given data point.
 
 
-    numDim = ndims(D);
-    numOfRows = size(D,1);
+    numDim = size(D, 2);
+    numOfRows = size(D, 1);
 
     % TODO implement h4kmeans+
     t = 0;
@@ -20,24 +20,28 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
     %randomly initalize the centroids.. in the dimensions we have.
     change =epsilon*2; 
     while(change > epsilon)
+        fprintf('%f > %f\n', change, epsilon);
         t =t+1;
         %// Cluster Assignment Step
-        clusters = zeros(size(D,1),1); %reset all clusters.
-        for xj = 1 : numOfRows
-            
-            row = D(xj);
-            [index, value]= min((repmat(row, k) - centroids).^2);
-            
+        clusters = cell(k, 1); %reset all clusters.
+        for ii = 1 : k
+            clusters{ii} = NaN(numOfRows,numDim);
+        end
+        clusterSize = ones(k, 1);
+        for xj = 1 : numOfRows   
+            row = D(xj, :);
+            repRow = repmat(row, k, 1)';
+            [value, idx] = min((sqrt(sum(abs(repRow - centroids).^2,1))).^2);
             %j = the index of the cenroids, with the least distance.
             % and assignt Xj to that cluster
-            clusters(index)  = [clusters(index), row];
+            clusters{idx}(clusterSize(idx),:) = row;
+            clusterSize(idx) = clusterSize(idx) + 1;
         end;
         tempCentroids = centroids; %or dont have a temp ???  and then make the centroids 0 at start ??? 
         for i=1: k
-           centroids(i) =  1/size(clusters(i), 1)* sum(clusters(i));
+           centroids(:, i) =  1/size(clusters{i}, 1)* nansum(clusters{i}, 1)';
         end;
-        change = ((sum(centroids - Lastcentroids).^2));
+        change = sum((sqrt(sum(abs(centroids - Lastcentroids).^2))).^2);
         Lastcentroids = tempCentroids;
     end;
-   
 end
