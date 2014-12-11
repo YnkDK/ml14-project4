@@ -25,23 +25,23 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
         %// Cluster Assignment Step
         clusters = cell(k, 1); %reset all clusters.
         for ii = 1 : k
-            clusters{ii} = NaN(numOfRows,numDim);
+            clusters{ii} = logical(false(1,numOfRows));
         end
-        clusterSize = ones(k, 1);
         for xj = 1 : numOfRows   
             row = D(xj, :);
             repRow = repmat(row, k, 1)';
             [value, idx] = min((sqrt(sum(abs(repRow - centroids).^2,1))).^2);
             %j = the index of the cenroids, with the least distance.
             % and assignt Xj to that cluster
-            clusters{idx}(clusterSize(idx),:) = row;
-            clusterSize(idx) = clusterSize(idx) + 1;
+            clusters{idx}(xj) = true;
         end;
         tempCentroids = centroids; %or dont have a temp ???  and then make the centroids 0 at start ??? 
         for i=1: k
-           centroids(:, i) =  1/size(clusters{i}, 1)* nansum(clusters{i}, 1)';
+           Ck = D(clusters{i}, :);
+           centroids(:, i) =  1/size(Ck, 1) * sum(Ck, 1)';
         end;
-        change = sum((sqrt(sum(abs(centroids - Lastcentroids).^2))).^2);
+        change = sum((sqrt(nansum(abs(centroids - Lastcentroids).^2))).^2);
+        fprintf('Change: %f\n', change);
         Lastcentroids = tempCentroids;
     end;
 end
