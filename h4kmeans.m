@@ -15,16 +15,16 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
     %centroids = zeros(k,size(D,2));
     
     
-    Lastcentroids = rand(numDim, k);
+    Lastcentroids = rand(k, numDim);
     centroids = Lastcentroids;
     %randomly initalize the centroids.. in the dimensions we have.
     change =epsilon*2; 
     
     preCompRows= cell(numOfRows,1);
     
-    parfor ii =1 : numOfRows
+    parfor ii = 1 : numOfRows
        row = D(ii, :);
-       repRow = repmat(row, k, 1)';
+       repRow = repmat(row, k, 1);
        preCompRows{ii} = repRow;
     end;
     
@@ -47,7 +47,10 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
         tempCentroids = centroids; %or dont have a temp ???  and then make the centroids 0 at start ??? 
         for i=1: k
            Ck = D(clusters{i}, :);
-           centroids(:, i) =  1/size(Ck, 1) * sum(Ck, 1)';
+           if isempty(Ck)
+               continue;
+           end;
+           centroids(i, :) =  1/size(Ck, 1) * sum(Ck, 1);
         end;
         change = sum((sqrt(nansum(abs(centroids - Lastcentroids).^2))).^2);
         fprintf('Change: %f\n', change);
