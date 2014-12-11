@@ -20,6 +20,7 @@ D = reshape(A, [img_size(1)*img_size(2) img_size(3)]);
 % different values for K.
 K = 5;
 
+
 fprintf('\nApplying K-Means to compress an image.\n\n');
 [centroids, clusters] = h4kmeans(D,K,0.001); 
 
