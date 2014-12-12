@@ -58,7 +58,3 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
         Lastcentroids = tempCentroids;
     end;
 end
-
-function [dist] = dist(X, Y)
-    dist = pdist2(X, Y, 'emd');
-end

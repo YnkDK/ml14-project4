@@ -3,7 +3,7 @@
 fprintf('\nRunning K-Means clustering on pixels from an image.\n\n');
 
 %  TODO. Load an image. This can be done using the call:
-A = double(imread('images/penisr.png'));
+A = double(imread('images/test.png'));
 % A = double(imread('images/penisr.png'));
 %  We will be displaying the image later on. MatLab expects pixel values to
 %  be in the 0 to 1 range
@@ -18,24 +18,31 @@ D = reshape(A, [img_size(1)*img_size(2) img_size(3)]);
 
 % TODO. Run k-means or EM to form clusters of colors. Experiment with using
 % different values for K.
-K = 52;
+K =64;
 
 
 fprintf('\nApplying K-Means to compress an image.\n\n');
-[centroids, clusters] = h4kmeans(D,K,100000); 
+% [centroids, clusters] = h4kmeans(D,K,0.000000001); 
+ [mu, P, SIGMA, clusters] = h4EM(D, K, 0.0);
+ 
+ disp('LOL FIX ME');
+% [centroids, clusters] = t4kmeans(D,K,1); 
 
+%   [idx, centroids] = kmeans(D, K, 'EmptyAction', 'drop','Display','iter','start','uniform');
+%test:
+ [mu, P, SIGMA, clusters] = H4EM(D, k, epsilon);
 
 % TODO. Use the resulting centroids and cluster assignments to construct a
 % vector of N-by-3 where for each pixel you use the centroid color values.
 % Use img_compressed for variable name.
-
+disp('done compressing');
  img_compressed = zeros(img_size(1)*img_size(2), img_size(3));
  for ii = 1 : K
-%      Ck = clusters{ii}; %use if ours, otheriwise if intern, use next
+        Ck = clusters{ii}; %use if ours, otheriwise if intern, use next
 %      instruction. 
-    Ck = clusters{ii};
+%       Ck = idx(:)==ii;
      if isempty(Ck)
-         fprintf('Cluster %d is empty!\n', ii);
+%          fprintf('Cluster %d is empty!\n', ii);
          continue
      end
      for jj = 1 : img_size(3)

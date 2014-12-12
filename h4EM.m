@@ -15,18 +15,21 @@ function [mu, P, SIGMA, clusters] = h4EM(D, k, epsilon, mu)
 % 
 % See also H4KMEANS.
     change = epsilon*2;
-    dataPoints = size(D,2);
+    dataPoints = size(D,1);
     if nargin == 3
-%         The initial centroids haven't been given, initialise the 
-% centroids uniformly, at random from the range for every dimension.
-    centroids  =  rand(numDim, k);
-    oldCentroids = centroids;
+      centroids  =  rand(k, size(D,2)); % centroids uniformly, at random from the range for every dimension.
+      oldCentroids = centroids;
     end
 
     % TODO implement EM
     mu = zeros(k,size(D,2));
     P = zeros(k,1);
-    SIGMA = cell(k,1);
+    SIGMA = zeros(k,k); % k x k 
+    for kk =1 : k
+        SIGMA(kk,kk) = kk;
+    end;
+    
+    
     clusters = zeros(k,1);
     
     
