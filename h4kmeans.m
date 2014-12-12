@@ -20,17 +20,17 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
     %randomly initalize the centroids.. in the dimensions we have.
     change =epsilon*2; 
     
-    preCompRows= cell(numOfRows,1);
+%     preCompRows= zeros( numOfRows, k, size(D(1, :),2)); %cell(numOfRows,1);
     
-    parfor ii = 1 : numOfRows
-       row = D(ii, :);
-       repRow = repmat(row, k, 1);
-       preCompRows{ii} = repRow;
-    end;
+%     for ii = 1 : numOfRows
+%        row = D(ii, :);
+%        repRow = repmat(row, k, 1);
+%        preCompRows{ii} = repRow;
+%         preCompRows(ii,:,:) = repRow;
+%     end;
     
     
     while(change > epsilon)
-        fprintf('%f > %f\n', change, epsilon);
         t =t+1;
         %// Cluster Assignment Step
         clusters = cell(k, 1); %reset all clusters.
@@ -38,10 +38,10 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
             clusters{ii} = logical(false(1,numOfRows));
         end
         for xj = 1 : numOfRows   
-            repRow = preCompRows{xj};
-            [value, idx] = min((sqrt(sum(abs(repRow - centroids).^2,1))).^2);
-            %j = the index of the cenroids, with the least distance.
-            % and assignt Xj to that cluster
+%              repRow = repmat(D(xj,:), k, 1);
+             xxxx = (D(xj,:));
+             repRow = xxxx(ones(1,k),:);
+            [~, idx] = min(abs(sum(repRow - centroids)));
             clusters{idx}(xj) = true;
         end;
         tempCentroids = centroids; %or dont have a temp ???  and then make the centroids 0 at start ??? 
@@ -52,8 +52,9 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
            end;
            centroids(i, :) =  1/size(Ck, 1) * sum(Ck, 1);
         end;
-        change = sum((sqrt(nansum(abs(centroids - Lastcentroids).^2))).^2);
+        change = sum(sum(centroids - Lastcentroids).^2);
         fprintf('Change: %f\n', change);
+        fprintf('%f > %f\n', change, epsilon);
         Lastcentroids = tempCentroids;
     end;
 end
