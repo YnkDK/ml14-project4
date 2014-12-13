@@ -1,10 +1,10 @@
 function [data, labels] = loadAndShowIris(fileName)
 % LOADANDSHOWIRIS loads one of two IRIS data sets.
 % 
-% [data, labels] = LOADANDSHOWIRIS('data/iris.csv') loads the full IRIS
+% [data, labels] = loadAndShowIris('data/iris.csv') loads the full IRIS
 % dataset.
 % 
-% [data, labels] = LOADANDSHOWIRIS('data/iris-PC.csv') loads the Principal
+% [data, labels] = loadAndShowIris('data/iris-PC.csv') loads the Principal
 % Components of the IRIS dataset.
 
 %     load data
@@ -18,11 +18,11 @@ function [data, labels] = loadAndShowIris(fileName)
         for i = 1:max(fileData(:,end))
            dataTemp = data;
            dataTemp(fileData(:,3) ~= i,:) = [];
-           scatter(dataTemp(:,1),dataTemp(:,2),20,signs{i});
+           scatter(dataTemp(:,1),dataTemp(:,2),36,signs{i});
            hold on
         end
         hold off
     else
-        gplotmatrix(data, data, labels, 'bgrcmyk', '.', 10, 'off');
+        gplotmatrix(data, data, labels, 'bgrcmyk', '.', 10, 'on');
     end
 end

@@ -9,16 +9,28 @@ function [F_individual, F_overall] = h4F1(computed, truth)
 %       F_individual = individual F1 scores for each cluster
 %       F_overall    = overall F1 score for algorithm, it's the mean
 %       average of the individual F1 scores
-
-    F_individual = zeros(size(compute,1));
-    for i=1 : size(compute, 1)
+    k = max(computed');
+    k = max (max(truth'), k);
+    all = size(truth,1);
+    F_individual = zeros(k,1);
+    
+    
+    
+    for ii=1 : k% size(computed, 1);
         %compute indivdual
-        all = size(truth,1);
-        tp = (computed(i,:)==truth);
-        pred = tp/(size(computed(i),1)); % is given by truePositive / (true positve + false positive). 
+        
+        realSize = sum(ii==truth);
+        
+        allIncomp = sum(computed==ii);
+        allInTruth = sum(truth==ii);
+        
+        
+        fp = max(allIncomp - allInTruth,0);
+        tp = allIncomp - fp;
+        pred = tp/(tp+fp); % is given by truePositive / (true positve + false positive). 
                                          % simply, how many were right out of all in the cluster 
-        recall =tp/all; %true positive / all in the right cluster/  real cluster.
-        F_individual(i) = (2*pred*recall)/(pred+recall);
+        recall =tp/realSize; %true positive / all in the right cluster/  real cluster.
+        F_individual(ii) = (2*pred*recall)/(pred+recall);
         
     end;
     F_overall = mean(F_individual);

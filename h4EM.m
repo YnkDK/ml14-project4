@@ -14,27 +14,29 @@ function [mu, P, SIGMA, clusters] = h4EM(D, k, epsilon, mu)
 % k-means to initialise EM.
 % 
 % See also H4KMEANS.
+
+
+emDim = 2;
+
+
     change = epsilon*2;
     dataPoints = size(D,1);
     if nargin == 3
       centroids  =  rand(k, size(D,2)); % centroids uniformly, at random from the range for every dimension.
-      oldCentroids = centroids;
+    else
+        centroids  = mu;
     end
-
+    oldCentroids = centroids;
+    
     % TODO implement EM
     mu = zeros(k,size(D,2));
     P = zeros(k,1);
-    SIGMA = zeros(k,k); % k x k 
-    for kk =1 : k
-        SIGMA(kk,kk) = kk;
-    end;
-    
-    
+    for kk = 1 : k
+        P(kk) = 1/k;
+    end
+    SIGMA = repmat(eye(emDim,emDim),k,1);
     clusters = zeros(k,1);
-    
-    
     w = zeros(k, dataPoints);
-    
     t = 0;
     while(change > epsilon)
         t = t +1;
@@ -67,5 +69,44 @@ function [mu, P, SIGMA, clusters] = h4EM(D, k, epsilon, mu)
         oldCentroids = tempCentroids;
         
     end
+
+        
+end
+
+function [mu, P, SIGMA, clusters] = h4EM2(D, k, epsilon, mu)
+     if nargin == 3
+        centroids  =  rand(k, size(D,2)); % centroids uniformly, at random from the range for every dimension.
+     else
+         centroids  = mu;
+     end
+    [means, sigma, P] = init(k, centroids);
+    change = inf;
+    while(change> epsilon)
+       w =  expect(D,k,
+    end
     
+end
+
+function [] = init()
+
+end
+
+
+function [w] = expect(D,k)
+
+    preCompCluster = zeros(k,1);
+    %     calc the first loop seperate since it is a lot smaller than the
+    %     other, so dont wast time recomputing it again.
+    %       essentially the top of the division. ( and if we sum it, part
+    %       of the button.
+    for kk = 1 : k
+        
+    end;
+    
+
+end
+
+
+function [] = maxi()
+
 end

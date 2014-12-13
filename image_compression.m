@@ -1,3 +1,4 @@
+function [] = image_compression()
 %  This script will load and compress an image using kmeans clustering of
 %  colors.
 fprintf('\nRunning K-Means clustering on pixels from an image.\n\n');
@@ -22,8 +23,11 @@ K =64;
 
 
 fprintf('\nApplying K-Means to compress an image.\n\n');
-% [centroids, clusters] = h4kmeans(D,K,0.000000001); 
- [mu, P, SIGMA, clusters] = h4EM(D, K, 0.0);
+ [centroids, clusters] = h4kmeans(D,K,0.000000001); 
+ 
+%  h4F1(clusters, truth); 
+ 
+%  [mu, P, SIGMA, clusters] = h4EM(D, K, 0.0);
  
  disp('LOL FIX ME');
 % [centroids, clusters] = t4kmeans(D,K,1); 
@@ -64,3 +68,4 @@ imagesc(1:1024, 1:768, img_compressed)
 title(sprintf('Compressed, with %d colors.', K));
 
 disp('done');
+end;

@@ -37,8 +37,18 @@ function [centroids, clusters] = t4kmeans(D,k,epsilon)
     for kk = 1 : k
         clusters{kk} = find(clustersAssignments == kk); % index for each data point.
     end
+    
+    clusters = convertToClusterAssign(clusters, D, k);
 end
 
+function dataCluster = convertToClusterAssign (clusters, D, k)
+    dataCluster = zeros(size(D,1),1);
+    for ii =1 : k
+        for jj = 1 : size(clusters{ii},1)
+            dataCluster(clusters{ii}(jj)) = ii;
+        end
+    end
+end
 
 
 function D = distL1( X, Y )
