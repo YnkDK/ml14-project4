@@ -26,7 +26,7 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
     end
     centroids = Lastcentroids;
     %randomly initalize the centroids.. in the dimensions we have.
-    change =epsilon*2; 
+    change =inf; 
     
 %     preCompRows= zeros( numOfRows, k, size(D(1, :),2)); %cell(numOfRows,1);
     
