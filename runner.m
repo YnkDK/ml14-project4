@@ -31,10 +31,9 @@ fprintf('-------------------------\r');
 
 
 
-
-[mu, P, sigma, clusters] =h4EM(data, 3, 0.0009);
-plotEM2D(P, mu, sigma, data, labels);
 fprintf('\r\n------------------------- EM -------------------\r\n');
+[mu, P, sigma, clusters] =h4EM(data, 3, 0.1);
+plotEM2D(P, mu, sigma, data, labels);
 [indi, overall] =  h4F1(clusters, labels);
 printF1(indi,overall, 'results');
 showIrisComputed2D(data, labels, clusters, title);
@@ -50,6 +49,7 @@ fprintf('-------------------------\r');
 
 fprintf('------------------------- 4d data----------------------------\r');
 
+return; %dont do 4d .
 [data, labels] = loadAndShowIris('data/iris.csv');
 
 
@@ -78,10 +78,9 @@ fprintf('-------------------------\r');
 
 
 
-
-[mu, P, sigma, clusters] =h4EM(data, 3, 0.0009);
-plotEMMultidimensional(clusters, labels, data);
 fprintf('\r\n------------------------- EM -------------------\r\n');
+[mu, P, sigma, clusters] =h4EM(data, 3, 0.1);
+plotEMMultidimensional(clusters, labels, data);
 [indi, overall] =  h4F1(clusters, labels);
 printF1(indi,overall, 'results');
 showIrisComputed2D(data, labels, clusters, title);
