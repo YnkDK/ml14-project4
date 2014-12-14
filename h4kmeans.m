@@ -37,11 +37,10 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
         for ii = 1 : k
             clusters{ii} = logical(false(1,numOfRows));
         end
-        for xj = 1 : numOfRows   
-%              repRow = repmat(D(xj,:), k, 1);
-             xxxx = (D(xj,:));
-             repRow = xxxx(ones(1,k),:);
-            [~, idx] = min(abs(sum(repRow - centroids)));
+        for xj = 1 : numOfRows
+            diff = (ones(k,1)*D(xj,:)) - centroids;
+            distance = sum(abs(diff).^2,2);
+            [~, idx] = min(distance);
             clusters{idx}(xj) = true;
         end;
         tempCentroids = centroids; %or dont have a temp ???  and then make the centroids 0 at start ??? 
@@ -52,7 +51,7 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
            end;
            centroids(i, :) =  1/size(Ck, 1) * sum(Ck, 1);
         end;
-        change = sum(sum(centroids - Lastcentroids).^2);
+        change = sum(sum(abs(centroids - Lastcentroids), 2).^2);
         fprintf('Change: %f\n', change);
         fprintf('%f > %f\n', change, epsilon);
         Lastcentroids = tempCentroids;
