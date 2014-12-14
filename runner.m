@@ -26,11 +26,26 @@ else
     fprintf('which is not (too) good\r');
 end
 fprintf('-------------------------\r');
-[mu, P, sigma, clusters] =h4EM(data, 3, 0.00005);
-% [P, mu, sigma, clusters] = h4EM();
-plotEM2D(P, mu, sigma, clusters, labels);
 
 
+
+
+
+[mu, P, sigma, clusters] =h4EM(data, 3, 0.0009);
+plotEM2D(P, mu, sigma, data, labels);
+fprintf('\r\n------------------------- EM -------------------\r\n');
+[indi, overall] =  h4F1(clusters, labels);
+printF1(indi,overall, 'results');
+showIrisComputed2D(data, labels, clusters, title);
+s =  h4Silhouette(data, clusters);
+fprintf('\r-------------------------');
+fprintf('\rSilhouette for EM:%f\r',mean(s));
+if(mean(s)>0.5) 
+    fprintf('which is (very) good\r');
+else
+    fprintf('which is not (too) good\r');
+end
+fprintf('-------------------------\r');
 end
 
 

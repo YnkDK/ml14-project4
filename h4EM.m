@@ -60,6 +60,8 @@ function [centroids, sigma, P] = init(D,k, haveCentroids)
     %or use kmeans to get the centroids.... ??
     if(haveCentroids ==false)
         [centroids, ~] = t4kmeans(D,k,0);
+    else
+        centroids = [];
     end;
 %     centroids  =  rand(k, size(D,2)); % centroids uniformly, at random from the range for every dimension.
 end
