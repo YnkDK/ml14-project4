@@ -78,13 +78,16 @@ function [w] = expect(D,k,P, centroids, sigma)
     %       of the button.
     emptyVal = zeros(dims, dims);
     S = zeros(1,k);
+    
+    posterior = zeros(k,1);
     for kk = 1 : k
         %avoid 0 posibilities by setting it to the lowest possible value
         %(eps).
         if( sigma(:,:,kk) == emptyVal )
             sigma(:,:,kk) = ones(dims, dims)*eps;
         end
-         S(kk) = max(sqrt(det(sigma(:,:,kk))), 1); %todo fix.should not have max.
+        posterior(kk) = det(inv(sigma(:,:,kk)));
+         S(kk) = sqrt(det(sigma(:,:,kk))); %todo fix.should not have max.
          preCompCluster(:,:,kk) = inv(sigma(:,:,kk));
          if(preCompCluster(:,:,kk) == ones(dims, dims)*inf) %todo fix.
              preCompCluster(:,:,kk) = sigma(:,:,kk);
@@ -96,7 +99,20 @@ function [w] = expect(D,k,P, centroids, sigma)
         for kk = 1 : k
             dXM = D(ii,:)-centroids(kk,:);% x-ui.
             pl = exp(-0.5*dXM*preCompCluster(:,:,kk)*dXM')/(tempFac*S(kk));
-            w(ii,kk) = P(kk)*pl;
+            
+            
+            aa = tempFac*(sqrt(sigma(:,:,ii)));
+            bb = dXM.^2;
+            cc = 2*sigma(:,:,ii);
+            
+%             f_val = (1/(tempFac*S(kk))) * exp(-1* ((dXM)*dXM')/(2*(S(kk).^2)));
+            f_val = exp(-bb/cc)/aa
+            
+            diff= pl-f_val;
+            if(diff~=0)
+                fprintf('|%f|%f|\r', pl, f_val);
+            end
+            w(ii,kk) =posterior(kk)*f_val;
         end
         w(ii,:) = w(ii,:)/sum(w(ii,:));
     end
