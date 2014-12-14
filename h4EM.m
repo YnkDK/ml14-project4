@@ -34,7 +34,10 @@ function [mu, P, sigma, clusters] = h4EM(D, k, epsilon, mu)
           change = change+ (eucDist(centroids(cc,:), oldCent(cc,:)))^2;
         end
         fprintf('improvement =  %10.20f\n', change);
-       
+        if(isnan(change))
+            centroids = oldCent;
+            break;
+        end
     end
     %we need to assign every datapoint to a cluster.  so use the most
     %likely one.
@@ -59,7 +62,7 @@ function [centroids, sigma, P] = init(D,k, haveCentroids)
 %     sigma = eye(dims,dims,k);
     %or use kmeans to get the centroids.... ??
     if(haveCentroids ==false)
-        [centroids, ~] = t4kmeans(D,k,0);
+        [centroids, ~] = h4kmeans(D,k,0);
     else
         centroids = [];
     end;
@@ -86,7 +89,7 @@ function [w] = expect(D,k,P, centroids, sigma)
         if( sigma(:,:,kk) == emptyVal )
             sigma(:,:,kk) = ones(dims, dims)*eps;
         end
-        posterior(kk) = det(inv(sigma(:,:,kk)));
+        posterior(kk) = sqrt(det(inv(sigma(:,:,kk))));
          S(kk) = sqrt(det(sigma(:,:,kk))); %todo fix.should not have max.
          preCompCluster(:,:,kk) = inv(sigma(:,:,kk));
          if(preCompCluster(:,:,kk) == ones(dims, dims)*inf) %todo fix.
@@ -101,16 +104,16 @@ function [w] = expect(D,k,P, centroids, sigma)
             pl = exp(-0.5*dXM*preCompCluster(:,:,kk)*dXM')/(tempFac*S(kk));
             
             
-            aa = tempFac*(sqrt(sigma(:,:,ii)));
-            bb = dXM.^2;
-            cc = 2*sigma(:,:,ii);
+            aa = tempFac*(sqrt(det(sigma(:,:,kk))));
+            bb = dXM * dXM';
+            cc = 2*(det(sigma(:,:,kk)));
             
 %             f_val = (1/(tempFac*S(kk))) * exp(-1* ((dXM)*dXM')/(2*(S(kk).^2)));
-            f_val = exp(-bb/cc)/aa
+            f_val = exp(-bb/cc)/aa;
             
             diff= pl-f_val;
             if(diff~=0)
-                fprintf('|%f|%f|\r', pl, f_val);
+%                 fprintf('|%f|%f|\r', pl, f_val);
             end
             w(ii,kk) =posterior(kk)*f_val;
         end
@@ -127,26 +130,54 @@ function  [P, centroids,sigma] = maximization(D,k,w)
     P = zeros(1,k);
     centroids = zeros(k,dims);
     sigma = zeros(dims,dims,k);
-    for i = 1 : k, 
-        for j = 1 : count
-            P(i) = P(i) + w(j,i);
-            centroids(i,:) = centroids(i,:) + w(j,i)*D(j,:);
-             % f(xj | centroids, sigma). the chance to see xj, in our model Sigma, given the expectaition
-        end
-        centroids(i,:) = centroids(i,:)/P(i); %move center, to the most "likely" points we have encountered. 
-                                              %in kmeans this would just be the average (but here we
-                                              %take advantage of the expectation
+    
+    %mean
+    for kk = 1 : k
+        top = w(:,kk)'*D(:,:); %is the top part, remeber the vector operation *
+                               % A= (a,b) ; B = (c,d) A*B = a*c+.. which is what we want
+        bottom = sum(w(:,kk));
+        centroids(kk,:)= top/bottom;
     end
-    for i=1:k,
-        for j=1: count
-            dXM = D(j,:)-centroids(i,:); %direct distance / the delta in the points.
-            sigma(:,:,i) = sigma(:,:,i) + w(j,i)*(dXM*dXM');
-        end
-        sigma(:,:,i) = eye(dims, dims).*sigma(:,:,i)./P(i);
-        % we assume we only have dims independt variables... 
+    
+    for kk = 1 : k
+        P(kk) = sum(w(:,kk))/count;
+    end
+    
+    
+    for kk = 1 : k
         
+        tempSum =0 ;
+        
+        for jj  = 1 : count
+            tempVal = D(jj,:)-centroids(kk,:);
+            tempSum = tempSum +w(jj,kk)*(tempVal*tempVal');
+        end
+        top  = tempSum;
+%       top = w(:,kk)'*(D(:,:)*D(:,:)');
+       bottom = sum(w(:,kk));
+       sigma(:,:,kk) =eye(dims,dims) *top/bottom;
     end
-    P = P./count;
+    
+%     for i = 1 : k, 
+%         for j = 1 : count
+%             P(i) = P(i) + w(j,i);
+%             centroids(i,:) = centroids(i,:) + w(j,i)*D(j,:);
+%              % f(xj | centroids, sigma). the chance to see xj, in our model Sigma, given the expectaition
+%         end
+%         centroids(i,:) = centroids(i,:)/P(i); %move center, to the most "likely" points we have encountered. 
+%                                               %in kmeans this would just be the average (but here we
+%                                               %take advantage of the expectation
+%     end
+%     for i=1:k,
+%         for j=1: count
+%             dXM = D(j,:)-centroids(i,:); %direct distance / the delta in the points.
+%             sigma(:,:,i) = sigma(:,:,i) + w(j,i)*(dXM*dXM');
+%         end
+%         sigma(:,:,i) = eye(dims, dims).*sigma(:,:,i)./P(i);
+%         % we assume we only have dims independt variables... 
+%         
+%     end
+%     P = P./count;
 end
 
 

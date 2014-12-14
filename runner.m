@@ -32,7 +32,7 @@ fprintf('-------------------------\r');
 
 
 fprintf('\r\n------------------------- EM -------------------\r\n');
-[mu, P, sigma, clusters] =h4EM(data, 3, 0.1);
+[mu, P, sigma, clusters] =h4EM(data, 3, 0.0000000000000001);
 plotEM2D(P, mu, sigma, data, labels);
 [indi, overall] =  h4F1(clusters, labels);
 printF1(indi,overall, 'results');
@@ -49,12 +49,12 @@ fprintf('-------------------------\r');
 
 fprintf('------------------------- 4d data----------------------------\r');
 
-return; %dont do 4d .
+% return; %dont do 4d .
 [data, labels] = loadAndShowIris('data/iris.csv');
 
 
 fprintf('\r\n------------------------- K means -------------------\r\n');
-[centers, cla] =  t4kmeans(data, 3, 0.00);
+[centers, cla] =  h4kmeans(data, 3, 0.00);
 [indi, overall] =  h4F1(cla, labels);
 % fprintf('\r\n------------------------- results-------------------\r\n');
 % fprintf('\r\nF1 score(overall): %f\r\n',overall);
@@ -79,7 +79,7 @@ fprintf('-------------------------\r');
 
 
 fprintf('\r\n------------------------- EM -------------------\r\n');
-[mu, P, sigma, clusters] =h4EM(data, 3, 0.1);
+[mu, P, sigma, clusters] =h4EM(data, 3, 0.0);
 plotEMMultidimensional(clusters, labels, data);
 [indi, overall] =  h4F1(clusters, labels);
 printF1(indi,overall, 'results');
