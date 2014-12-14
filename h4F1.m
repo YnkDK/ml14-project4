@@ -27,11 +27,16 @@ function [F_individual, F_overall] = h4F1(computed, truth)
         
         fp = max(allIncomp - allInTruth,0);
         tp = allIncomp - fp;
-        pred = tp/(tp+fp); % is given by truePositive / (true positve + false positive). 
-                                         % simply, how many were right out of all in the cluster 
-        recall =tp/realSize; %true positive / all in the right cluster/  real cluster.
-        F_individual(ii) = (2*pred*recall)/(pred+recall);
         
+        if(tp==0 && fp == 0)
+            F_individual(ii)=0;
+        else
+        
+            pred = tp/(tp+fp); % is given by truePositive / (true positve + false positive). 
+                                             % simply, how many were right out of all in the cluster 
+            recall =tp/realSize; %true positive / all in the right cluster/  real cluster.
+            F_individual(ii) = (2*pred*recall)/(pred+recall);
+        end
     end;
     F_overall = mean(F_individual);
 end

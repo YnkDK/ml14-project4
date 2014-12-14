@@ -10,7 +10,7 @@ pointsMis =0;
 s = zeros(size(D, 1)-1,1);
     % TODO implement h4Silhouette
      
-    parfor ii=1 : size(D,1)
+    for ii=1 : size(D,1)
         xi = D(ii,:);
         ownCluster = clusters(ii);
         %step 1
@@ -25,15 +25,19 @@ s = zeros(size(D, 1)-1,1);
         
         top =myMin-myInXi;
         bottom = max([myInXi, myMin]);
-        si = top/bottom;
-        if(si<0.1 && si>=0)
-          fprintf('point at:%f,%f is at the border of the cluster..\r', xi(1), xi(2));
+        if(bottom==0 || bottom == inf)
+            s(ii)=0;
+        else
+            si = top/bottom;
+            if(si<0.1 && si>=0)
+              fprintf('point at:%f,%f is at the border of the cluster..\r', xi(1), xi(2));
+            end
+            if(si<=0)
+                pointsMis=  pointsMis +1;
+                fprintf('point at:%f,%f is belived to be misclustered.\r', xi(1), xi(2));
+            end
+            s(ii) =si;
         end
-        if(si<=0)
-            pointsMis=  pointsMis +1;
-            fprintf('point at:%f,%f is belived to be misclustered.\r', xi(1), xi(2));
-        end
-        s(ii) =si;
     end;
     fprintf('found totally : %i points of possibly misclasification',pointsMis);
 end

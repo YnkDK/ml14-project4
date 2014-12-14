@@ -12,7 +12,8 @@ function [centroids, clusters] = t4kmeans(D,k,epsilon)
              for cc =1 : k
 %                dist = abs(sum((D(ii)-centroids(cc)).^2));
 %                 dist = distEmd(D(ii), centroids(cc));
-                   dist = sqrt(sum((D(ii)-centroids(cc)).^2)); %eucDist(centroids(cc),D(ii));
+%                    dist = sqrt(sum((D(ii)-centroids(cc)).^2)); %eucDist(centroids(cc),D(ii));
+                 dist = tempDist ( D(ii), centroids(cc));
                  if(dist<= minDist)
                      minDist = dist;
                      minIndex = cc;
@@ -29,7 +30,7 @@ function [centroids, clusters] = t4kmeans(D,k,epsilon)
                 continue;
             end
             centroids(cc,:)= mean(idxes);
-            improvement = improvement+ (eucDist(centroids(cc,:), temp))^2;
+            improvement = improvement+tempDist (temp, centroids(cc,:));%(eucDist(centroids(cc,:), temp))^2;
         end
         fprintf('improvement =  %f\n', improvement);
     end
@@ -73,6 +74,12 @@ parfor i=1:n
   ycdfRep = ycdf( mOnes, : );
   D(:,i) = sum(abs(Xcdf - ycdfRep),2);
 end
+
+end
+
+function d =  tempDist (x,y)
+    dim = size(x,2);
+    d = nthroot(sum((abs(x-y)).^dim),dim);
 
 end
 function dist = eucDist (x, y)

@@ -4,7 +4,7 @@ function [] = image_compression()
 fprintf('\nRunning K-Means clustering on pixels from an image.\n\n');
 
 %  TODO. Load an image. This can be done using the call:
-A = double(imread('images/AU_main_back_small.png'));
+A = double(imread('images/4colors.png'));
 % A = double(imread('images/penisr.png'));
 
 % Size of the image
