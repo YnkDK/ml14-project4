@@ -4,66 +4,50 @@ function [] = image_compression()
 fprintf('\nRunning K-Means clustering on pixels from an image.\n\n');
 
 %  TODO. Load an image. This can be done using the call:
-A = double(imread('images/penisr.png'));
+A = double(imread('images/AU_main_back_small.png'));
 % A = double(imread('images/penisr.png'));
-%  We will be displaying the image later on. MatLab expects pixel values to
-%  be in the 0 to 1 range
-A = A / 255; % Divide by 255 so that all values are in the range 0 - 1
 
 % Size of the image
 img_size = size(A);
 
-% TODO. Reshape the image into an N x 3 matrix where N = number of pixels.
+% Reshape the image into an N x 3 matrix where N = number of pixels.
 % Each row will contain the Red, Green and Blue pixel values. 
 D = reshape(A, [img_size(1)*img_size(2) img_size(3)]);
-
-% TODO. Run k-means or EM to form clusters of colors. Experiment with using
+originalColors = size(unique(D), 1)+1;
+fprintf('Image contains %d different colors\n', originalColors);
+D = D / 255; % Divide by 255 so that all values are in the range 0 - 1
+% Run k-means or EM to form clusters of colors. Experiment with using
 % different values for K.
-K =255;
+K = floor(originalColors/2);
+[centroids, idx] = h4kmeans(D, K, 0.001); 
+ fprintf('\nApplying K-Means to compress an image.\n\n');
 
-
-fprintf('\nApplying K-Means to compress an image.\n\n');
-  [centroids, idx] = t4kmeans(D,K,0.0); 
- 
-%  h4F1(clusters, truth); 
- 
-%  [mu, P, SIGMA, clusters] = h4EM(D, K, 0.0);
- 
-%  disp('LOL FIX ME');
-% [centroids, clusters] = t4kmeans(D,K,1); 
-
-%    [idx, centroids] = kmeans(D, K, 'EmptyAction', 'drop','Display','iter','start','uniform');
-%test:
-%  [mu, P, SIGMA, clusters] = H4EM(D, k, epsilon);
-
-% TODO. Use the resulting centroids and cluster assignments to construct a
+% Use the resulting centroids and cluster assignments to construct a
 % vector of N-by-3 where for each pixel you use the centroid color values.
 % Use img_compressed for variable name.
-disp('done compressing');
- img_compressed = zeros(img_size(1)*img_size(2), img_size(3));
- for ii = 1 : K
-       Ck = idx(:)==ii;
-     if isempty(Ck)
-%          fprintf('Cluster %d is empty!\n', ii);
-         continue
-     end
-     for jj = 1 : img_size(3)
-         img_compressed(Ck, jj) = centroids(ii, jj);
-     end
- end
+img_compressed = zeros(img_size(1)*img_size(2), img_size(3));
+nonEmpty = 0; % Count how many clusters we actually use
+for ii = 1 : K
+    Ck = idx{ii};
+    if sum(Ck) == 0
+        % Skip empty clusters
+        continue
+    end
+    for jj = 1 : img_size(3)
+        img_compressed(Ck, jj) = centroids(ii, jj);
+    end
+    nonEmpty = nonEmpty + 1;
+end
 % Reshape the vector into a 3 dimensional matrix corresponding to the
 % image.
 img_compressed = reshape(img_compressed, img_size(1), img_size(2), 3);
-disp('Done , rendering.');
 % Display the original image 
 subplot(1, 2, 1);
-imagesc(1:1024, 1:768, A); 
-title('Original');
+imagesc(1:img_size(2), 1: img_size(1), reshape(D, img_size(1), img_size(2), 3)); 
+title(sprintf('Original, with %d colors.', originalColors));
 
 % Display compressed image next to original
 subplot(1, 2, 2);
-imagesc(1:1024, 1:768, img_compressed)
-title(sprintf('Compressed, with %d colors.', K));
-
-disp('done');
+imagesc(1:img_size(2), 1: img_size(1), img_compressed)
+title(sprintf('Compressed, with %d (%d) colors.', nonEmpty, K));
 end
