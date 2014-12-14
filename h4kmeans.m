@@ -15,7 +15,15 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
     %centroids = zeros(k,size(D,2));
     
     
-    Lastcentroids = rand(k, numDim);
+    %Lastcentroids = rand(k, numDim);
+    tmp = unique(D, 'rows');
+    if size(tmp, 1) >= k    
+        permutation = randperm(size(tmp, 1));
+        Lastcentroids = tmp(permutation(1 : k), :);
+    else
+        % All colors can have their own centroid
+        Lastcentroids = [tmp ; rand(k - size(tmp, 1), numDim)];
+    end
     centroids = Lastcentroids;
     %randomly initalize the centroids.. in the dimensions we have.
     change =epsilon*2; 
@@ -39,7 +47,8 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
         end
         for xj = 1 : numOfRows
             diff = (ones(k,1)*D(xj,:)) - centroids;
-            distance = sum(abs(diff).^2,2);
+            % ||diff||^2 = sqrt(sum(diff.^2))^2 = sum(diff.^2)
+            distance = sum(diff.^2,2);
             [~, idx] = min(distance);
             clusters{idx}(xj) = true;
         end;
@@ -51,9 +60,8 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
            end;
            centroids(i, :) =  1/size(Ck, 1) * sum(Ck, 1);
         end;
-        change = sum(sum(abs(centroids - Lastcentroids), 2).^2);
+        change = sum(sum((centroids - Lastcentroids).^2, 2));
         fprintf('Change: %f\n', change);
-        fprintf('%f > %f\n', change, epsilon);
         Lastcentroids = tempCentroids;
     end;
 end
