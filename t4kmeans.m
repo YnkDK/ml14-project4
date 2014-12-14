@@ -1,32 +1,30 @@
 function [centroids, clusters] = t4kmeans(D,k,epsilon) 
-    rng(0);
+%     rng(0);
     centroids = rand(k, size(D,2),1);
     improvement = inf;
     clustersAssignments = zeros(size(D,1),1);  %what we assign each node to.
     while(improvement>epsilon)
+        %assign each point to the closest center
         parfor ii = 1 : size(D,1)
-            %find dist to all clusters.
-            %ecludian dist.
+            
              minDist = inf;
              minIndex = -1;
-             for cc =1 : k
-%                dist = abs(sum((D(ii)-centroids(cc)).^2));
-%                 dist = distEmd(D(ii), centroids(cc));
-%                    dist = sqrt(sum((D(ii)-centroids(cc)).^2)); %eucDist(centroids(cc),D(ii));
+             for cc =1 : k %find dist to all cluster centers.
                  dist = tempDist ( D(ii), centroids(cc));
                  if(dist<= minDist)
                      minDist = dist;
                      minIndex = cc;
                  end
              end
-            clustersAssignments(ii) = minIndex;
+            clustersAssignments(ii) = minIndex; % we are closest to "minIndex".
         end
         improvement =0;
+        %then update the centers, and calcualte the changes / improvement.
         for cc =1 : k
             temp = centroids(cc,:);
             idxes = D(clustersAssignments == cc,:);
             if( isempty(idxes))
-%                 centroids(cc,:) = rand(size(D,2),1);
+                %we could reassign clusters.
                 continue;
             end
             centroids(cc,:)= mean(idxes);

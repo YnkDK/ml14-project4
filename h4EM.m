@@ -90,10 +90,11 @@ function [w] = expect(D,k,P, centroids, sigma)
              preCompCluster(:,:,kk) = sigma(:,:,kk);
          end
     end;
-    tempFac = (2*pi)^(0.5*size(D,2));
+    tempFac = sqrt(2*pi); %or sqrt of it all ?? TODO find out.
+    
     for ii = 1 : size(D,1)
         for kk = 1 : k
-            dXM = D(ii,:)-centroids(kk,:);
+            dXM = D(ii,:)-centroids(kk,:);% x-ui.
             pl = exp(-0.5*dXM*preCompCluster(:,:,kk)*dXM')/(tempFac*S(kk));
             w(ii,kk) = P(kk)*pl;
         end
