@@ -64,4 +64,13 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
         fprintf('Change: %f\n', change);
         Lastcentroids = tempCentroids;
     end;
+    
+    clusters = convertToClusterAssignment(clusters, k);
+end
+
+function dataCluster = convertToClusterAssignment (clusters, k)
+    dataCluster = zeros(length(clusters{1}),1);
+    for ii = 1 : k
+        dataCluster(clusters{ii}) = ii;
+    end
 end
