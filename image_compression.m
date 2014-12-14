@@ -18,8 +18,9 @@ fprintf('Image contains %d different colors\n', originalColors);
 D = D / 255; % Divide by 255 so that all values are in the range 0 - 1
 % Run k-means or EM to form clusters of colors. Experiment with using
 % different values for K.
-K = 32;
-[centroids, idx] = h4kmeans(D, K, 0.1); 
+K = 8;
+%[centroids, idx] = h4kmeans(D, K, 0.1);
+[centroids, ~, ~, ~] =h4EMmvnpdf(D, K, 0.1);
  fprintf('\nApplying K-Means to compress an image.\n\n');
 
 % Use the resulting centroids and cluster assignments to construct a

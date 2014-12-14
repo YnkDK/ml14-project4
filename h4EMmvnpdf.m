@@ -33,6 +33,7 @@ function [mu, P, sigma, clusters] = h4EM(D, k, epsilon, mu)
         SIGMA{ii} = eye(d);
     end
     clusters = zeros(n,1);
+    disp('Starting EM');
     %% Expectation Maximization iterations
     change = Inf;
     w = zeros(k, n);
@@ -40,8 +41,8 @@ function [mu, P, sigma, clusters] = h4EM(D, k, epsilon, mu)
         oldCent = centroids;
         %% Expectation
         for ii = 1 : k
-            for jj = 1 : n
-                f = P(ii) * mvnpdf(D(jj,:), centroids(ii,:), SIGMA{ii});
+            parfor jj = 1 : n
+                f = P(ii) * mvnpdf(D(jj,:), centroids(ii,:), SIGMA{ii}); %#ok<PFBNS>
                 fsum = eps;
                 for aa = 1 : k
                     fsum = fsum + mvnpdf(D(jj,:), centroids(aa,:), SIGMA{aa}) * P(aa);
@@ -56,8 +57,8 @@ function [mu, P, sigma, clusters] = h4EM(D, k, epsilon, mu)
            centroids(ii) = sum(w(ii, :)*D)/wij;
            %% Re-estimate covariance matrix
            fsum = 0;
-           for jj = 1 : n
-              fsum = fsum + w(ii, jj)*(D(jj,:) - centroids(ii,:))*(D(jj,:)-centroids(ii,:))';
+           parfor jj = 1 : n
+              fsum = fsum + w(ii, jj)*(D(jj,:) - centroids(ii,:))*(D(jj,:)-centroids(ii,:))'; %#ok<PFBNS>
            end
            SIGMA{ii} = eye(d,d) * (fsum/wij);
            %% Re-estimate priors
