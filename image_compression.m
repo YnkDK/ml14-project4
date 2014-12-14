@@ -4,7 +4,7 @@ function [] = image_compression()
 fprintf('\nRunning K-Means clustering on pixels from an image.\n\n');
 
 %  TODO. Load an image. This can be done using the call:
-A = double(imread('images/4colors.png'));
+A = double(imread('images/AU_main_back_small.png'));
 % A = double(imread('images/penisr.png'));
 
 % Size of the image
@@ -18,25 +18,16 @@ fprintf('Image contains %d different colors\n', originalColors);
 D = D / 255; % Divide by 255 so that all values are in the range 0 - 1
 % Run k-means or EM to form clusters of colors. Experiment with using
 % different values for K.
-K = floor(originalColors/2);
-[centroids, idx] = h4kmeans(D, K, 0.001); 
+K = 32;
+[centroids, idx] = h4kmeans(D, K, 0.1); 
  fprintf('\nApplying K-Means to compress an image.\n\n');
 
 % Use the resulting centroids and cluster assignments to construct a
 % vector of N-by-3 where for each pixel you use the centroid color values.
 % Use img_compressed for variable name.
 img_compressed = zeros(img_size(1)*img_size(2), img_size(3));
-nonEmpty = 0; % Count how many clusters we actually use
-for ii = 1 : K
-    Ck = idx{ii};
-    if sum(Ck) == 0
-        % Skip empty clusters
-        continue
-    end
-    for jj = 1 : img_size(3)
-        img_compressed(Ck, jj) = centroids(ii, jj);
-    end
-    nonEmpty = nonEmpty + 1;
+for ii = 1 : size(D, 1)
+    img_compressed(ii, :) = centroids(idx(ii), :);
 end
 % Reshape the vector into a 3 dimensional matrix corresponding to the
 % image.
@@ -49,5 +40,5 @@ title(sprintf('Original, with %d colors.', originalColors));
 % Display compressed image next to original
 subplot(1, 2, 2);
 imagesc(1:img_size(2), 1: img_size(1), img_compressed)
-title(sprintf('Compressed, with %d (%d) colors.', nonEmpty, K));
+title(sprintf('Compressed, with %d colors.', K));
 end
