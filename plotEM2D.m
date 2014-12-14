@@ -27,7 +27,7 @@ function plotEM2D(P, mu, SIGMA, D, correct)
     [X1,X2] = meshgrid(linspace(-4,4,80)', linspace(-4,4,80)');
     X = [X1(:) X2(:)];
     for i=1:size(P,1)
-        sigma_for_cluster = SIGMA{i,1};
+        sigma_for_cluster = SIGMA(:,:,i);
         p = mvnpdf(X, mu(i,:), sigma_for_cluster);
         [~, h] = contour(X1,X2,reshape(p,80,80),1);
         set(h, 'LineColor', colors(i,:));

@@ -26,7 +26,7 @@ else
     fprintf('which is not (too) good\r');
 end
 fprintf('-------------------------\r');
-[mu, P, sigma, clusters] =h4EM();
+[mu, P, sigma, clusters] =h4EM(data, 3, 0.00005);
 % [P, mu, sigma, clusters] = h4EM();
 plotEM2D(P, mu, sigma, clusters, labels);
 
