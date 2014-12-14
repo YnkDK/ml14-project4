@@ -4,7 +4,7 @@ function [] = image_compression()
 fprintf('\nRunning K-Means clustering on pixels from an image.\n\n');
 
 %  TODO. Load an image. This can be done using the call:
-A = double(imread('images/penisr.png'));
+A = double(imread('images/4colors.png'));
 % A = double(imread('images/penisr.png'));
 %  We will be displaying the image later on. MatLab expects pixel values to
 %  be in the 0 to 1 range
