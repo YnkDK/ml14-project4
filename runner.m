@@ -15,7 +15,21 @@ fprintf('\r\n------------------------- K means -------------------\r\n');
 % end
 
 printF1(indi,overall, 'results');
-showIrisComputed2D(data, labels, cla);
+title = sprintf('k-means|(F1): %f',overall);
+showIrisComputed2D(data, labels, cla, title);
+s =  h4Silhouette(data, cla);
+fprintf('\r-------------------------');
+fprintf('\rSilhouette for k-means:%f\r',mean(s));
+if(mean(s)>0.5) 
+    fprintf('which is (very) good\r');
+else
+    fprintf('which is not (too) good\r');
+end
+fprintf('-------------------------\r');
+[mu, P, sigma, clusters] =h4EM();
+% [P, mu, sigma, clusters] = h4EM();
+plotEM2D(P, mu, sigma, clusters, labels);
+
 
 end
 
@@ -27,6 +41,8 @@ fprintf('\rF1 score(overall): %f\r',overall);
 for ii =1 : size(indi,1)
     fprintf('\t cluster %i  : %f\r', ii, indi(ii));
 end
+
+
 end
 
 

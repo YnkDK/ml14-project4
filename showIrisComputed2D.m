@@ -1,6 +1,7 @@
-function [] = showIrisComputed2D(data, truth, computed)
+function [] = showIrisComputed2D(data, truth, computed, wt)
     signs = {'o', 'square', '^'};
-    figure();
+    figure('Name',wt);
+    
     for i = 1:max(truth)
     
         allPoints = data(truth==i,:);
