@@ -54,7 +54,7 @@ fprintf('------------------------- 4d data----------------------------\r');
 
 
 fprintf('\r\n------------------------- K means -------------------\r\n');
-[centers, cla] =  h4kmeans(data, 3, 0.00);
+[centers, cla] =  t4kmeans(data, 3, 0.00);
 [indi, overall] =  h4F1(cla, labels);
 % fprintf('\r\n------------------------- results-------------------\r\n');
 % fprintf('\r\nF1 score(overall): %f\r\n',overall);

@@ -5,17 +5,9 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
 % number of desired clusters and a min difference between iterations at
 % which to stop optimising. It returns the centroids of clusters along with
 % cluster assignments for every given data point.
-
-
     numDim = size(D, 2);
     numOfRows = size(D, 1);
-
-    % TODO implement h4kmeans+
     t = 0;
-    %centroids = zeros(k,size(D,2));
-    
-    
-    %Lastcentroids = rand(k, numDim);
     tmp = unique(D, 'rows');
     if size(tmp, 1) >= k    
         permutation = randperm(size(tmp, 1));
@@ -27,17 +19,7 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
     centroids = Lastcentroids;
     %randomly initalize the centroids.. in the dimensions we have.
     change =inf; 
-    
-%     preCompRows= zeros( numOfRows, k, size(D(1, :),2)); %cell(numOfRows,1);
-    
-%     for ii = 1 : numOfRows
-%        row = D(ii, :);
-%        repRow = repmat(row, k, 1);
-%        preCompRows{ii} = repRow;
-%         preCompRows(ii,:,:) = repRow;
-%     end;
-    
-    
+
     while(change > epsilon)
         t =t+1;
         %// Cluster Assignment Step
