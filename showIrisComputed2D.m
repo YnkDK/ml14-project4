@@ -5,10 +5,19 @@ function [] = showIrisComputed2D(data, truth, computed, wt)
     for i = 1:max(truth)
     
         allPoints = data(truth==i,:);
-        taggetPoints = data(computed==i,:);
+        
+        correctI = 1;
+        bestLength = -Inf;
+        for ii = 1 : max(truth)
+            len = length(intersect(allPoints, data(computed==ii,:),'rows'));
+            if bestLength < len
+                correctI = ii;
+                bestLength = len;
+            end
+        end
         
 %         dataPoints = data(computed==i,:);
-        
+        taggetPoints = data(computed==correctI,:);
         correctPoints = intersect(allPoints, taggetPoints,'rows');
         
         
