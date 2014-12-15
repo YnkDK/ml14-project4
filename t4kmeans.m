@@ -1,44 +1,66 @@
-function [centroids, clusters] = t4kmeans(D,k,epsilon) 
-%     rng(0);
-    centroids = rand(k, size(D,2),1);
-    improvement = inf;
-    clustersAssignments = zeros(size(D,1),1);  %what we assign each node to.
-    while(improvement>epsilon)
-        %assign each point to the closest center
-        parfor ii = 1 : size(D,1)
-             diff = (ones(k,1)*D(ii,:)) - centroids;% ||diff||^2 = sqrt(sum(diff.^2))^2 = sum(diff.^2)
-            distance = sum(diff.^2,2);
-            [~, idx] = min(distance);
-            clustersAssignments(ii) = idx;
-        end
-        improvement =0;
-        %then update the centers, and calcualte the changes / improvement.
-        for cc =1 : k
-            temp = centroids(cc,:);
-            idxes = D(clustersAssignments == cc,:);
-            if( isempty(idxes))
-                %we could reassign clusters.
-                continue;
-            end
-            centroids(cc, :) =  1/size(idxes, 1) * sum(idxes, 1);
-%             centroids(cc,:)= mean(idxes);
-            improvement = improvement+ sum((temp-centroids(cc,:)).^2,2); %tempDist (temp, centroids(cc,:));%(eucDist(centroids(cc,:), temp))^2;
-        end
-        fprintf('improvement =  %f\n', improvement);
-    end
-    clusters = cell(k,1);
-    for kk = 1 : k
-        clusters{kk} = find(clustersAssignments == kk); % index for each data point.
+function [centroids, clusters] = t4kmeans(D,k,epsilon)  %original h4kmeans
+% H4KMEANS runs the K-means argorithm.
+% 
+% [centroids, clusters] = H4KMEANS(D,k,epsilon) takes in a data matrix, a
+% number of desired clusters and a min difference between iterations at
+% which to stop optimising. It returns the centroids of clusters along with
+% cluster assignments for every given data point.
+
+    %% Global variables
+    numDim = size(D, 2);
+    numOfRows = size(D, 1);
+
+    
+    %% Initialize centroids
+    tmp = unique(D, 'rows');
+    if size(tmp, 1) >= k
+        % Pick k random data points as initial
+        permutation = randperm(size(tmp, 1));
+        Lastcentroids = tmp(permutation(1 : k), :);
+    else
+        % All colors can have their own centroid
+        Lastcentroids = [tmp ; rand(k - size(tmp, 1), numDim)];
     end
     
-    clusters = convertToClusterAssign(clusters, D, k);
+    %% Find "best" cluster assignment iterative
+    centroids = Lastcentroids;
+    % Everything changes in the begining
+    change = Inf; 
+    while(change > epsilon)
+        %% Cluster Assignment Step
+        clusters = cell(k, 1); %reset all clusters.
+        parfor ii = 1 : k
+            clusters{ii} = logical(false(1,numOfRows));
+        end
+        for xj = 1 : numOfRows
+            diff = (ones(k,1)*D(xj,:)) - centroids;
+            % ||diff||^2 = sqrt(sum(diff.^2))^2 = sum(diff.^2)
+            distance = sum(diff.^2,2);
+            [~, idx] = min(distance);
+            clusters{idx}(xj) = true;
+        end;
+        %% Update centroids
+        tempCentroids = centroids;
+        parfor i=1: k
+           Ck = D(clusters{i}, :);
+           if isempty(Ck)
+               continue;
+           end;
+           centroids(i, :) =  1/size(Ck, 1) * sum(Ck, 1);
+        end;
+        %% Get the change
+        change = sum(sum((centroids - Lastcentroids).^2, 2));
+        fprintf('Change: %f\n', change);
+        Lastcentroids = tempCentroids;
+    end;
+    %% Convert output
+    clusters = convertToClusterAssignment(clusters, k);
 end
 
-function dataCluster = convertToClusterAssign (clusters, D, k)
-    dataCluster = zeros(size(D,1),1);
-    for ii =1 : k
-        for jj = 1 : size(clusters{ii},1)
-            dataCluster(clusters{ii}(jj)) = ii;
-        end
+function dataCluster = convertToClusterAssignment (clusters, k)
+% CONVERTTOCLUSTERASSIGNMENT converts to proper output
+    dataCluster = zeros(length(clusters{1}),1);
+    for ii = 1 : k
+        dataCluster(clusters{ii}) = ii;
     end
 end

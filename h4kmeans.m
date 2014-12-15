@@ -29,19 +29,29 @@ function [centroids, clusters] = h4kmeans(D,k,epsilon)
     while(change > epsilon)
         %% Cluster Assignment Step
         clusters = cell(k, 1); %reset all clusters.
-        for ii = 1 : k
+        parfor ii = 1 : k
             clusters{ii} = logical(false(1,numOfRows));
         end
-        for xj = 1 : numOfRows
+        
+        clusterAssignments = zeros(numOfRows,1);
+        
+        parfor xj = 1 : numOfRows
             diff = (ones(k,1)*D(xj,:)) - centroids;
             % ||diff||^2 = sqrt(sum(diff.^2))^2 = sum(diff.^2)
             distance = sum(diff.^2,2);
             [~, idx] = min(distance);
-            clusters{idx}(xj) = true;
+%             clusters{idx}(xj) = true;
+            clusterAssignments(xj) = idx;
         end;
+        for jj = 1 : numOfRows
+            idx = clusterAssignments(jj);
+            xj = jj;
+            clusters{idx}(xj) = true;    
+        end
+        
         %% Update centroids
         tempCentroids = centroids;
-        for i=1: k
+        parfor i=1: k
            Ck = D(clusters{i}, :);
            if isempty(Ck)
                continue;
