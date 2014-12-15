@@ -65,6 +65,7 @@ function [mu, P, sigma, clusters] = h4EM(D, k, epsilon, mu)
            P(ii) = wij/n;
         end
         change = sum(sum((centroids - oldCent).^2, 2));
+        fprintf('Change: %f\n', change);
     end
     mu = centroids;
     sigma = SIGMA;
