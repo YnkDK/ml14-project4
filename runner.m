@@ -30,7 +30,7 @@ fprintf('-------------------------\r');
 
 rng(0);
 fprintf('\r\n------------------------- EM -------------------\r\n');
-[mu, P, sigma, clusters] =h4EM(data, 3, 0.0);
+[mu, P, sigma, clusters] =h4EM(data, 3, eps);
 plotEM2D(P', mu, sigma, data, labels);
 [indi, overall] =  h4F1(clusters, labels);
 printF1(indi,overall, 'results');
