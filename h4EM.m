@@ -65,7 +65,7 @@ function [centroids, sigma, P] = init(D,k, haveCentroids)
 %     sigma = eye(dims,dims,k);
     %or use kmeans to get the centroids.... ??
     if(haveCentroids ==false)
-         [centroids, ~] = h4kmeans(D,k,0);
+         [centroids, ~] = h4kmeans(D,k,0.0001);
 %          centroids = rand(k, size(D,2)); 
     else
         centroids = [];
@@ -77,25 +77,33 @@ end
 function [w] = expect(D,k,P, centroids, sigma)
     dims = size(D,2);
     w = zeros(size(D,1),k);
+    
+    
+    aaMat = zeros(k, dims);
+    bbInvMat= zeros(dims,dims,k);
+    for kk = 1 : k
+         aaMat(kk,:) = 1/((2*pi)^(dims/2) * sqrt(det(sigma(:,:,kk))));
+         bbInvMat(:,:,kk) = inv(sigma(:,:,kk));
+    end
+    
+    
     for jj = 1 : size(D,1)
         
         allCalc = zeros(k,1);
         xj = D(jj,:);
-        for ii = 1 : k
-            %use 13.6 ?? 
-             aa = 1/((2*pi)^(dims/2) * sqrt(det(sigma(:,:,ii))));
-%             aa = 1/((2*pi)^(dims/2) * (det(sigma(:,:,ii))));
+        for ii = 1 : k  %use 13.6 ?? 
+            % aa = 1/((2*pi)^(dims/2) * sqrt(det(sigma(:,:,ii))));
+            aa =   aaMat(ii);
             dist = xj-centroids(ii,:);
-            bb = -(dist * inv(sigma(:,:,ii))*dist')/2;
-            f_i =(aa*exp(bb));
-         allCalc(ii) = (f_i.*P(ii))';
+            bb = -(dist * bbInvMat(:,:,ii)*dist')/2;
+            f_i = (aa*exp(bb));
+            allCalc(ii) = (f_i.*P(ii))';
         end
         
         sumVal = sum(allCalc);
         for ii = 1 : k
             val = (allCalc(ii) / sumVal);
             w(jj,ii)= val;
-            
         end
          if(sum(w(jj,:))>1.000001)
              fprintf('bug');
@@ -112,23 +120,8 @@ function  [P, centroids,sigma] = maximization(D,k,w)
     
     %mean
     for kk = 1 : k
-            sumTop = 0;
-            sumBot = 0;
-            for jj = 1 : count
-                sumTop = sumTop + w(jj,kk)*D(jj,:);
-                sumBot = sumBot + w(jj,kk);
-            end
-            centroids(kk,:)= sumTop/sumBot;
-            
-            tt = sumTop/sumBot;
             centroids(kk,:) =((w(:,kk)'*D) / sum(w(:,kk)));
-            
-            if((tt - centroids(kk,:))~=0)
-%                 fprintf('bug');
-            end
-                
     end
-   
     scatter(centroids(:,1),centroids(:,2));
     hold on;
     %P.

@@ -4,8 +4,8 @@ function [] = image_compression()
 fprintf('\nRunning K-Means clustering on pixels from an image.\n\n');
 
 %  TODO. Load an image. This can be done using the call:
-A = double(imread('images/DAIMI_AU_small.png'));
-% A = double(imread('images/penisr.png'));
+ A = double(imread('images/DAIMI_AU_small.png'));
+%  A = double(imread('images/penisr.png'));
 
 % Size of the image
 img_size = size(A);
@@ -18,9 +18,10 @@ fprintf('Image contains %d different colors\n', originalColors);
 D = D / 255; % Divide by 255 so that all values are in the range 0 - 1
 % Run k-means or EM to form clusters of colors. Experiment with using
 % different values for K.
-K = 8;
-%[centroids, idx] = h4kmeans(D, K, 0.1);
-[centroids, ~, ~, ~] =h4EM(D, K, 0.1);
+K = 100;
+  [centroids, idx] = h4kmeans(D, K, 0.001);
+% disp('here');
+%  [centroids, ~, ~, ~] =h4EM(D, K, 0.1,centroids);
  fprintf('\nApplying K-Means to compress an image.\n\n');
 
 % Use the resulting centroids and cluster assignments to construct a

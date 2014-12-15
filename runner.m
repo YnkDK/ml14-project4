@@ -28,8 +28,6 @@ else
 end
 fprintf('-------------------------\r');
 
-
-
 rng(0);
 fprintf('\r\n------------------------- EM -------------------\r\n');
 [mu, P, sigma, clusters] =h4EM(data, 3, 0.0);
