@@ -7,7 +7,7 @@ printF1(indi, overall,'sanity results');
 
 fprintf('------------------------- 2d data----------------------------\r');
 fprintf('\r\n------------------------- K means -------------------\r\n');
-[centers, cla] =  t4kmeans(data, 3, 0.00);
+[centers, cla] =  h4kmeans(data, 3, 0.00);
 [indi, overall] =  h4F1(cla, labels);
 % fprintf('\r\n------------------------- results-------------------\r\n');
 % fprintf('\r\nF1 score(overall): %f\r\n',overall);
@@ -30,13 +30,14 @@ fprintf('-------------------------\r');
 
 
 
-
+rng(0);
 fprintf('\r\n------------------------- EM -------------------\r\n');
-[mu, P, sigma, clusters] =h4EM(data, 3, 0.0000000000000001);
-plotEM2D(P, mu, sigma, data, labels);
+[mu, P, sigma, clusters] =h4EM(data, 3, 0.0);
+plotEM2D(P', mu, sigma, data, labels);
 [indi, overall] =  h4F1(clusters, labels);
 printF1(indi,overall, 'results');
-showIrisComputed2D(data, labels, clusters, title);
+title = sprintf('EM f1:%f',overall);
+showIrisComputed2D(data, labels, clusters,title );
 s =  h4Silhouette(data, clusters);
 fprintf('\r-------------------------');
 fprintf('\rSilhouette for EM:%f\r',mean(s));
@@ -79,10 +80,11 @@ fprintf('-------------------------\r');
 
 
 fprintf('\r\n------------------------- EM -------------------\r\n');
-[mu, P, sigma, clusters] =h4EM(data, 3, 0.0);
+[mu, P, sigma, clusters] =h4EM(data, 3, 0.0000000000000001);
 plotEMMultidimensional(clusters, labels, data);
 [indi, overall] =  h4F1(clusters, labels);
 printF1(indi,overall, 'results');
+title = sprintf('EM (4d) f1:%f',overall);
 showIrisComputed2D(data, labels, clusters, title);
 s =  h4Silhouette(data, clusters);
 fprintf('\r-------------------------');
